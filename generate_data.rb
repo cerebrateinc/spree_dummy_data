@@ -4,8 +4,8 @@ require 'curb'
 require 'json'
 
 # Initialize Store URL and Token
-STORE_URL= "http://majestic-cart-3030.spree.mx" #"http://monster-basket-2205.spree.mx"
-TOKEN= "50142d8cf796ec97610e98136a0b4c586eab32278c1267a5"#"0d756afff13bc0357b2348de38ed8e50ebcb9869ed8ddd1b"
+STORE_URL= "http://mega-mart-1516.spree.mx" #"http://majestic-cart-3030.spree.mx" #"http://monster-basket-2205.spree.mx"
+TOKEN= "7a5746670f7d2c7b44c478b304520ea9cb1faf9f9a1384d0"  #"50142d8cf796ec97610e98136a0b4c586eab32278c1267a5"#"0d756afff13bc0357b2348de38ed8e50ebcb9869ed8ddd1b"
 
 
 while(true)
@@ -40,21 +40,23 @@ while(true)
 	puts "\nORDER NUMBER = #{order_number}"
 
 	# Create Line Items
-	line_items_api = "/api/orders/#{order_number}/line_items.json"
-	request = Curl::Easy.http_post("#{STORE_URL}#{line_items_api}",
-	                         Curl::PostField.content('line_item[variant_id]', "#{Random.rand(variant_ids.min..variant_ids.max)}"),
-	                         Curl::PostField.content('line_item[quantity]', "#{Random.rand(1..4)}")) do |http|
-		http.headers['X-Spree-Token'] = TOKEN
-	end
+	for i in 0..Random.rand(1..3)
+		line_items_api = "/api/orders/#{order_number}/line_items.json"
+		request = Curl::Easy.http_post("#{STORE_URL}#{line_items_api}",
+		                         Curl::PostField.content('line_item[variant_id]', "#{Random.rand(variant_ids.min..variant_ids.max)}"),
+		                         Curl::PostField.content('line_item[quantity]', "#{Random.rand(1..4)}")) do |http|
+			http.headers['X-Spree-Token'] = TOKEN
+		end
 
-	# Successful update API call returns 201 (http://guides.spreecommerce.com/api/summary.html#rules)
-	if request.response_code.to_i == 201
-		puts "\nLine item created successfully"
-	else
-		puts "\nUnable to create line item! Exiting"
-		exit(0)
-	end
-	line_item = JSON.parse(request.body_str) 
+		# Successful update API call returns 201 (http://guides.spreecommerce.com/api/summary.html#rules)
+		if request.response_code.to_i == 201
+			puts "\nLine item created successfully"
+		else
+			puts "\nUnable to create line item! Exiting"
+			exit(0)
+		end
+		line_item = JSON.parse(request.body_str) 
+   	end
 	
 	# PUT /api/checkouts/:number/next.json
 
